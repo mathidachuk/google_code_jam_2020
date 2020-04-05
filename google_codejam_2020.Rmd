@@ -1,12 +1,16 @@
 ---
 title: "2020 Google Code Jam - Qualification Round"
-output: 
+output:
+  html_document:
+    df_print: paged
+    toc: yes
+    toc_depth: '3'
   html_notebook:
-    toc: true
-    toc_float: 
-      collapsed: true
-    toc_depth: 3
     theme: paper
+    toc: yes
+    toc_depth: 3
+    toc_float:
+      collapsed: yes
 ---
 
 ```{r setup, include=FALSE, warning=FALSE}
@@ -179,11 +183,9 @@ for (i in 1:t) {
   out <- paste0(tasks$who[order(tasks$tasknum)],
                 collapse = "")
   
-  
   cat(paste0("Case #", i, ":"), out, "\n")
   
 }
-
 
 ```
 
@@ -196,7 +198,7 @@ import numpy as np
 
 f = open("q3_input.txt", "r")
 
-t = int(f.readline()) # read a line with a single integer  
+t = int(f.readline()) 
 
 dtype = [('tasknum', int), ('start', int), ('end', int), ('who', str)]
 for i in range(1, t + 1):     
@@ -236,7 +238,6 @@ for i in range(1, t + 1):
 input <- file("q3_input.txt", "r")
 while(length(line <- readLines(input, n=1)) > 0) {
   cat(line, "\n")
-  # process line
 }
 
 ```
