@@ -194,28 +194,25 @@ for (i in 1:t) {
   
   tasks <- tasks[order(tasks$start), ]
   
-  tasks$who <- ""
+  out <- rep("", n)
   
-  tasks[1, "who"] <- "C"
-  
-  c_cur_end <- tasks$end[1]
+  c_cur_end <- 0
   j_cur_end <- 0
   
-  for (j in 2:n) {
+  for (j in 1:n) {
     if (c_cur_end <= tasks$start[j]) {
-      tasks$who[j] <- "C"
+      out[tasks$tasknum[j]] <- "C"
       c_cur_end <- tasks$end[j]
     } else if (j_cur_end <= tasks$start[j]) {
-      tasks$who[j] <- "J"
+      out[tasks$tasknum[j]] <- "J"
       j_cur_end <- tasks$end[j]
     } else {
       out <- "IMPOSSIBLE"
       break
     }
   }
-  
-  out <- paste0(tasks$who[order(tasks$tasknum)],
-                collapse = "")
+    
+  out <- paste0(out, collapse = "")
   
   cat(paste0("Case #", i, ":"), out, "\n")
   
