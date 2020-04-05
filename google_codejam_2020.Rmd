@@ -1,0 +1,242 @@
+---
+title: "2020 Google Code Jam - Qualification Round"
+output: 
+  html_notebook:
+    toc: true
+    toc_float: 
+      collapsed: true
+    toc_depth: 3
+    theme: paper
+---
+
+```{r setup, include=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(root.dir = "")
+library(reticulate)
+use_python("C:/ProgramData/Anaconda3")
+```
+
+## The Problems
+
+All of the problems can be found here:
+https://codingcompetitions.withgoogle.com/codejam/round/000000000019fd27
+
+## Problem 1: Vestigium {.tabset .tabset-fade .tabset-pills}
+
+### R Solution
+```{r problem_1}
+
+has_repeat <- function(v) {
+  length(v) != length(unique(v))
+}
+
+str_2_vect <- function(s) {
+  as.integer(unlist(strsplit(s, " ")))
+}
+
+input <- file("q1_input.txt", "r")
+
+t <- as.integer(readLines(input, n = 1))
+
+for (i in 1:t) {
+  
+  n <- as.integer(readLines(input, n = 1))
+  
+  m <- list()
+  
+  out_r <- 0
+  out_c <- 0
+  
+  for (j in 1:n) {
+    m[[j]] <- str_2_vect(readLines(input, n = 1))
+    out_r <- out_r + has_repeat(m[[j]])
+  }
+  
+  m <- matrix(unlist(m), ncol = n, byrow = TRUE)
+  
+  out_k <- sum(diag(m))
+
+  for (col in 1:n) {
+    out_c <- out_c + has_repeat(m[, col]) 
+  }
+  
+  cat(paste0("Case #", i, ":"), out_k, out_r, out_c, "\n")
+  
+}
+
+```
+
+
+### Sample Data Set
+```{r problem_1_input, warning = FALSE}
+
+input <- file("q1_input.txt", "r")
+while(length(line <- readLines(input, n=1)) > 0) {
+  cat(line, "\n")
+  # process line
+}
+
+```
+
+## Problem 2: Nesting Depth {.tabset .tabset-fade .tabset-pills}
+
+### R Solution
+```{r problem_2}
+
+str_2_vect <- function(s) {
+  as.integer(unlist(strsplit(s, "")))
+}
+
+
+input <- file("q2_input.txt", "r")
+
+t <- as.integer(readLines(input, n = 1))
+
+for (i in 1:t) {
+  s <- readLines(input, n = 1)
+  v <- unique(str_2_vect(s))
+  
+  for (j in v[v > 0]) {
+    withp <- paste0(paste0(rep("(", j), collapse = ""), 
+                    j, 
+                    paste0(rep(")", j), collapse = ""))
+    s <- gsub(j, withp, s)
+  }
+  
+  while (grepl("[)][(]", s)) {
+    s <- gsub("[)][(]", "", s)
+  }
+  
+  cat(paste0("Case #", i, ":"), s, "\n")
+  
+}
+
+```
+
+
+### Sample Data Set
+```{r problem_2_input, warning = FALSE}
+
+input <- file("q2_input.txt", "r")
+while(length(line <- readLines(input, n=1)) > 0) {
+  cat(line, "\n")
+  # process line
+}
+
+```
+
+## Problem 3: Parenting Partnering Returns {.tabset .tabset-fade .tabset-pills}
+
+### R solution
+
+```{r problem_3}
+          
+str_2_df <- function(s) {
+  a <- as.integer(unlist(strsplit(s, " ")))
+  data.frame(tasknum = j, start = a[1], end = a[2])
+}
+
+input <- file("q3_input.txt", "r")
+
+t <- as.integer(readLines(input, n = 1))
+
+  
+for (i in 1:t) {
+  
+  n <- as.integer(readLines(input, n = 1))
+  
+  tasks <- data.frame(task = integer(),
+                      start = integer(),
+                      end = integer())
+  
+  for (j in 1:n) {
+    task <- str_2_df(readLines(input, n = 1))
+    tasks <- rbind(tasks, task)
+  }
+  
+  tasks <- tasks[order(tasks$start), ]
+  
+  tasks$who <- ""
+  
+  tasks[1, "who"] <- "C"
+  
+  c_cur_end <- tasks$end[1]
+  j_cur_end <- 0
+  
+  for (j in 2:n) {
+    if (c_cur_end <= tasks$start[j]) {
+      tasks$who[j] <- "C"
+      c_cur_end <- tasks$end[j]
+    } else if (j_cur_end <= tasks$start[j]) {
+      tasks$who[j] <- "J"
+      j_cur_end <- tasks$end[j]
+    } else {
+      out <- "IMPOSSIBLE"
+      break
+    }
+  }
+  
+  out <- paste0(tasks$who[order(tasks$tasknum)],
+                collapse = "")
+  
+  
+  cat(paste0("Case #", i, ":"), out, "\n")
+  
+}
+
+
+```
+
+### Python Solution
+
+Same exact solution rewritten in python3 because the R solution does not meet the time limit on the second test (rip R).
+
+```{python}
+import numpy as np
+
+f = open("q3_input.txt", "r")
+
+t = int(f.readline()) # read a line with a single integer  
+
+dtype = [('tasknum', int), ('start', int), ('end', int), ('who', str)]
+for i in range(1, t + 1):     
+    n = int(f.readline())        
+    tasks = np.empty(n, dtype = dtype)
+    for j in range(0, n):
+        cur_start, cur_end = [int(s) for s in f.readline().split(" ")]
+        tasks['tasknum'][j] = j
+        tasks['start'][j] = cur_start
+        tasks['end'][j] = cur_end
+        tasks['who'][j] = ""
+        
+    tasks = np.sort(tasks, order = "start", axis = 0)
+    
+    out = [None] * n
+    c_cur_end = 0
+    j_cur_end = 0
+    
+    for j in range(0, n):
+        if c_cur_end <= int(tasks[j][1]):
+            out[tasks['tasknum'][j]] = "C"
+            c_cur_end = int(tasks[j][2])
+        elif j_cur_end <= int(tasks[j][1]):
+            out[tasks['tasknum'][j]] = "J"
+            j_cur_end = int(tasks[j][2])
+        else:
+            out = "IMPOSSIBLE"
+            break
+            
+    print("Case #{}, {}".format(i, ''.join(out)))   
+```
+
+
+### Sample Data Set
+```{r problem_3_input, warning = FALSE}
+
+input <- file("q3_input.txt", "r")
+while(length(line <- readLines(input, n=1)) > 0) {
+  cat(line, "\n")
+  # process line
+}
+
+```
