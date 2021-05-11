@@ -163,7 +163,7 @@ while(length(line <- readLines(input, n=1)) > 0) {
 
 ## Problem 3: Parenting Partnering Returns {.tabset .tabset-fade .tabset-pills}
 
-Sort the tasks by start time and then assign them sequentially. Unfortunately R is slow so the same exact solution had to be rewritten in python 3 to meet the time limit (rip R).
+Sort the tasks by start time and then assign them sequentially.
 
 ### R solution
 
